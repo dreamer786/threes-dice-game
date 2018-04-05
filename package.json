@@ -1,0 +1,22 @@
+{
+  "name": "km3657-homework07",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nyu-csci-ua-0480-008-spring-2018/km3657-homework07.git"
+  },
+  "author": "Mahataz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nyu-csci-ua-0480-008-spring-2018/km3657-homework07/issues"
+  },
+  "homepage": "https://github.com/nyu-csci-ua-0480-008-spring-2018/km3657-homework07#readme",
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
