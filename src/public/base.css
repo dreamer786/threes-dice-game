@@ -10,3 +10,13 @@ p{
     vertical-align: top;
     padding: 20px;
 }
+span{
+	display:inline-block;
+	border-style: solid;
+    vertical-align: top;
+    padding: 20px;
+}
+
+button{
+	margin-top: 20px;
+}

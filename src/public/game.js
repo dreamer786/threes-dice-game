@@ -1,46 +1,53 @@
+
+
+var dice1 = [{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face:0},{pinned:false, face:0}];
+var dice = {first: undefined, second: undefined, third: undefined, fourth: undefined, fifth: undefined};
+var rolls = [];
+var numList = []; 
+var computerScore = 0;
+var playerScore;
+var game; //game screen
+
 document.addEventListener("DOMContentLoaded", function(event){
 	const go = document.querySelector('button');
-	console.log("go ", go);
 	go.addEventListener('click', startGame);
-	let dice = {first: undefined, second: undefined, third: undefined, fourth: undefined, fifth: undefined};
-	let numberList = [];
-	function startGame(){
+	
+
+});
+function startGame(){
 		let numbers = document.getElementsByName("diceValues")[0].value;
-		numList = numbers.split(",");
-		if (numList.length === 0){
-			diceRoll();
+		if (numbers){
+			numList =  numbers.split(",");
 		}
-		else{
-			numberList = numList;
-		}
+
+		console.log("num list", numList);
 		//remove title
 		document.getElementById("intro").style.visibility = "hidden";
-		/*
-		const div = document.getElementById("#intro");
-		while(div.firstChild){
-			div.removeChild(div.firstChild);
-		}
-		*/
+		
 		//show game screen
-		let game = document.getElementById('game');
+		game = document.getElementById('game');
 		game.classList.remove('hidden');
 		game.style.visibility = "visible"; 
+
 		//create dice by a div with 5 p tags that have borders
-		let dice = document.createElement("div");
+		var dice = document.createElement("div");
 		for(let i = 0; i < 5; i ++){
-			let die = document.createElement("p");
+			let die = document.createElement("span");
 			die.append("   ");
 
 			dice.appendChild(die);
 		}
-		console.log(dice);
+		//console.log(dice);
 		//create start, roll, pin buttons
-		let start = document.createElement("button");
+		var start = document.createElement("button");
 		start.append("Start");
-		let roll = document.createElement("button");
+		start.setAttribute("id", "start")
+		var roll = document.createElement("button");
 		roll.append("Roll");
-		let pin = document.createElement("button");
+		roll.setAttribute("id", roll);
+		var pin = document.createElement("button");
 		pin.append("Pin");
+		pin.setAttribute("id", "pin");
 		roll.disabled = true;
 		pin.disabled = true;
 
@@ -48,16 +55,80 @@ document.addEventListener("DOMContentLoaded", function(event){
 		game.appendChild(start);
 		game.appendChild(roll);
 		game.appendChild(pin);
+		const startButton = document.querySelector("#start");
+		//console.log("start button ", startButton);
+		startButton.addEventListener('click', computerPlay);
 
 	}
-});
+function computerPlay(){
+	var computer = document.createElement("p");
+	computer.append("Computer score: ");
+	let numPins = 5;
+	//roll dice
+	while(numPins > 0) {
+		dice1.forEach(function (die){
+			if (die.pinned === false){
+				die.face = diceRoll();
+			}
+		});
+		console.log("my dice ", dice1);
 
+		//find the minimum 
+		let pinned = {};
+		let minimum = dice1.reduce((min, curr) =>{
+			if (curr.face < min){
+				min = curr.face;
+				return min;
+			}
+			else{
+				return min;
+			}
+		}, 6);
+		console.log("min ", minimum);
+		//pin the minimum (doesnt matter if there are duplicates?)
+		let found = false;
+		dice1.forEach(function(die){
+			if (die.face === minimum && !found){
+				console.log("pinned");
+				die.pinned = true;
+				found = true;
+			}
+		});
+
+		if (minimum === 3) {
+			computerScore += 0;
+			computer.append(" 0 (3) + ");
+		}
+		else{
+			computerScore += minimum;
+			if (numPins === 1){
+				computer.append(minimum + " = ");
+			}
+			else{
+				computer.append(minimum + " + ");
+			}
+		}
+		numPins --;
+	}
+	computer.append(computerScore);
+	game.appendChild(computer);
+
+
+	console.log("computer score ", computerScore);
+
+}
 	
 function diceRoll(){
-	//return first number, remove it from list
-	if (numberList.length > 0){
-		return numberList.shift();
+	//if there are numbers from the input, return first number, remove it from list
+	if (numList.length > 0){
+		//console.log("num roll die ", numList);
+		let num = numList.shift();
+		return parseInt(num);
 	}
-	return Math.floor(Math.random() * 6) + 1;
+	else{
+		let rand = Math.floor(Math.random() * 6) + 1;
+		console.log("random num ", rand);
+		return rand;
+	}
 }
 
