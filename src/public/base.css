@@ -1,0 +1,12 @@
+.overlay{
+	visibility: hidden;
+}
+#game{
+	visibility: hidden;
+}
+p{
+	display:inline-block;
+    border-style: solid;
+    vertical-align: top;
+    padding: 20px;
+}
