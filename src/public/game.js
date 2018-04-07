@@ -1,13 +1,12 @@
 
 
 var dice1 = [{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face:0},{pinned:false, face:0}];
-var dice = {first: undefined, second: undefined, third: undefined, fourth: undefined, fifth: undefined};
-var rolls = [];
 var numList = []; 
 var computerScore = 0;
 var playerScore;
 var game; //game screen
-var player;
+var player;//player score on screen
+var computer; //computer score on screen
 var start;
 var roll;
 var pin;
@@ -23,7 +22,6 @@ function startGame(){
 			numList =  numbers.split(",");
 		}
 
-		console.log("num list", numList);
 		//remove title
 		document.getElementById("intro").style.visibility = "hidden";
 		
@@ -38,7 +36,6 @@ function startGame(){
 		for(let i = 0; i < 5; i ++){
 			let die = document.createElement("span");
 			die.append("   ");
-
 			dice.appendChild(die);
 		}
 		//console.log(dice);
@@ -55,19 +52,27 @@ function startGame(){
 		roll.disabled = true;
 		pin.disabled = true;
 
+		player = document.createElement("p");
+		player.append("Player Score: 0");
+		player.style.visibility = "hidden";
+		
+		computer = document.createElement("p");
+		computer.append("Computer score: ");
+		computer.style.visibility = "hidden";
+
 		game.appendChild(dice);
+		game.appendChild(computer);
+		game.appendChild(player);
 		game.appendChild(start);
 		game.appendChild(roll);
 		game.appendChild(pin);
 		const startButton = document.querySelector("#start");
-		//console.log("start button ", startButton);
 		startButton.addEventListener('click', computerPlay);
+		//dice.childNodes.forEach((die)=>{die.addEventListener('click', select(die))});
 		
 
 	}
 function computerPlay(){
-	var computer = document.createElement("p");
-	computer.append("Computer score: ");
 	let numPins = 5;
 	//roll dice
 	while(numPins > 0) {
@@ -77,7 +82,7 @@ function computerPlay(){
 				//console.log("die ", die.face);
 			}
 		});
-		console.log("computer dice ", dice1);
+		//console.log("computer dice ", dice1);
 
 		//find the minimum that is not pinned
 		let minimum = dice1.reduce((min, curr) =>{
@@ -91,12 +96,12 @@ function computerPlay(){
 			return min;
 			
 		}, 6);
-		console.log("min ", minimum);
+		//console.log("min ", minimum);
 		//pin the minimum (doesnt matter if there are duplicates?)
 		let found = false;
 		dice1.forEach(function(die){
 			if (die.face === minimum && !found){
-				console.log("pinned");
+				//console.log("pinned");
 				die.pinned = true;
 				found = true;
 			}
@@ -118,13 +123,11 @@ function computerPlay(){
 		numPins --;
 	}
 	computer.append(computerScore);
-	game.appendChild(computer);
+	computer.style.visibility = "visible";
+	player.style.visibility = "visible";
 
-
-	console.log("computer score ", computerScore);
-	player = document.createElement("p");
-	player.append("Player Score: 0");
-	game.appendChild(player);
+	//console.log("computer score ", computerScore);
+	
 
 	start.disabled = true;
 	roll.disabled = false;
@@ -149,6 +152,8 @@ function diceRoll(){
 
 function rollDie(){
 	//player's turn, unpin everything
+	let boxes = document.querySelector(".dice");
+	console.log("boxes ", boxes);
 	dice1.forEach(function (die){
 		if (die.pinned){
 			die.pinned = false;
@@ -162,15 +167,35 @@ function rollDie(){
 				die.face = diceRoll();
 			}
 		});
-		console.log("player dice ", dice1);
+		//console.log("player dice ", dice1);
 		//display in DOM
-		let boxes = document.querySelector(".dice");
 		let diceIndex = 0;
-		boxes.childNodes.forEach((children) => {
-			children.textContent = dice1[diceIndex].face;
+		boxes.childNodes.forEach((child) => {
+			child.textContent = dice1[diceIndex].face;
 			diceIndex ++;
 		});
+
+		//disable roll
+		roll.disabled = true;
+		document.querySelectorAll("span").forEach(function(die){
+			die.addEventListener('click', function(){
+				this.classList.toggle("pinned");
+			});
+		});
+		//click on die -- select for pinning
+		//pinned dice not clickable
+		//clicking on die deselects it
  		numPins --;
 	}
+	
 }
+/*
+//selects or deselect a die
+function select(){
+	console.log("die was clicked");
+	child.classList.toggle("pinned");
+}
+*/
+function pinDie(child){
 
+}

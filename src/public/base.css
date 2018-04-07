@@ -4,16 +4,28 @@
 #game{
 	visibility: hidden;
 }
-p{
-    padding: 20px;
-}
+
 span{
 	display:inline-block;
 	border-style: solid;
     vertical-align: top;
     padding: 20px;
+    margin: 10px 10px 20px 10px;
+    background-color: white;
 }
 
 button{
 	margin-top: 20px;
+}
+
+span:hover{
+	background-color: yellow;
+}
+
+.pinned{
+	pointer-events: none;
+	background-color: gray;
+}
+.unpinned {
+	background-color: beige;
 }
