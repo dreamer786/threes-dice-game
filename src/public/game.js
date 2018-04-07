@@ -10,6 +10,8 @@ var computer; //computer score on screen
 var start;
 var roll;
 var pin;
+let numPinned = 0;
+
 document.addEventListener("DOMContentLoaded", function(event){
 	const go = document.querySelector('button');
 	go.addEventListener('click', startGame);
@@ -68,8 +70,7 @@ function startGame(){
 		game.appendChild(pin);
 		const startButton = document.querySelector("#start");
 		startButton.addEventListener('click', computerPlay);
-		//dice.childNodes.forEach((die)=>{die.addEventListener('click', select(die))});
-		
+			
 
 	}
 function computerPlay(){
@@ -153,7 +154,6 @@ function diceRoll(){
 function rollDie(){
 	//player's turn, unpin everything
 	let boxes = document.querySelector(".dice");
-	console.log("boxes ", boxes);
 	dice1.forEach(function (die){
 		if (die.pinned){
 			die.pinned = false;
@@ -161,41 +161,93 @@ function rollDie(){
 	});
 
 	let numPins = 5;
+	let numLoops = 0;
 	while(numPins > 0){
 		dice1.forEach(function (die){
 			if (die.pinned === false){
 				die.face = diceRoll();
 			}
 		});
-		//console.log("player dice ", dice1);
 		//display in DOM
 		let diceIndex = 0;
 		boxes.childNodes.forEach((child) => {
 			child.textContent = dice1[diceIndex].face;
 			diceIndex ++;
 		});
-
 		//disable roll
 		roll.disabled = true;
+		pin.disabled = false;
+		//select dice
 		document.querySelectorAll("span").forEach(function(die){
 			die.addEventListener('click', function(){
-				this.classList.toggle("pinned");
+				console.log("die selected");
+				this.classList.toggle("selected");
 			});
 		});
-		//click on die -- select for pinning
-		//pinned dice not clickable
-		//clicking on die deselects it
- 		numPins --;
+		diceIndex = 0;//use for pinning 
+		//check for any pinned dice
+		pin.addEventListener('click', function (){
+			let numSelected = 0;
+			document.querySelectorAll("span").forEach(function(die){
+				if (die.classList.contains("selected")){
+					if (!die.classList.contains("pinned")){
+						die.classList.toggle("pinned");
+					}
+					if (die.classList.contains("unpinned")){
+						die.classList.toggle("unpinned");
+					}
+					dice1[diceIndex].pinned = true;
+					numSelected ++;
+				}
+				else{
+					die.classList.toggle("unpinned");
+				}
+				diceIndex ++;
+			});
+		});	
+		diceIndex = 0;
+		//check number of  dice that has been pinned, decrement it by loop counter
+		numPinned += dice1.reduce(function(accum, curr){
+			if (curr.pinned){
+				accum ++; 
+			}
+			return accum;
+		}, 0);
+		console.log("num pins ", numPinned);
+		console.log("num pins left: ", numPins - numPinned);
+ 		numPins -= numPinned;
+ 		
+ 		numLoops ++;
+		if (numLoops > 1000){
+			console.log("too many loop ", numLoops);
+			break;
+		}
+		
 	}
 	
 }
-/*
-//selects or deselect a die
-function select(){
-	console.log("die was clicked");
-	child.classList.toggle("pinned");
-}
-*/
-function pinDie(child){
+
+function pinDie(){
+	//look through each span and see if it has selected class
+	//if none have selected class, dont pin anything
+	//else disable that span from being selected the next round
+	let diceIndex = 0;
+	let numSelected = 0;
+	document.querySelectorAll("span").forEach(function(die){
+		if (die.classList.contains("selected")){
+			if (!die.classList.contains("pinned")){
+				die.classList.toggle("pinned");
+			}
+			if (die.classList.contains("unpinned")){
+				die.classList.toggle("unpinned");
+			}
+			dice1[diceIndex].pinned = true;
+			numSelected ++;
+		}
+		else{
+			die.classList.toggle("unpinned");
+		}
+		diceIndex ++;
+	});
 
 }

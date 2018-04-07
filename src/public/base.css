@@ -22,10 +22,15 @@ span:hover{
 	background-color: yellow;
 }
 
-.pinned{
+.selected{
+	background-color: green;
+}
+
+.pinnned{
 	pointer-events: none;
 	background-color: gray;
 }
-.unpinned {
+
+.unpinned{
 	background-color: beige;
 }
