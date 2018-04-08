@@ -26,7 +26,7 @@ span:hover{
 	background-color: green;
 }
 
-.pinnned{
+.pinned{
 	pointer-events: none;
 	background-color: gray;
 }

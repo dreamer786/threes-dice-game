@@ -3,7 +3,7 @@
 var dice1 = [{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face:0},{pinned:false, face:0}];
 var numList = []; 
 var computerScore = 0;
-var playerScore;
+var playerScore = 0;
 var game; //game screen
 var player;//player score on screen
 var computer; //computer score on screen
@@ -11,6 +11,7 @@ var start;
 var roll;
 var pin;
 let numPinned = 0;
+let winner;
 
 document.addEventListener("DOMContentLoaded", function(event){
 	const go = document.querySelector('button');
@@ -40,7 +41,6 @@ function startGame(){
 			die.append("   ");
 			dice.appendChild(die);
 		}
-		//console.log(dice);
 		//create start, roll, pin buttons
 		start = document.createElement("button");
 		start.append("Start");
@@ -62,15 +62,88 @@ function startGame(){
 		computer.append("Computer score: ");
 		computer.style.visibility = "hidden";
 
+		winner = document.createElement("p");
+		winner.setAttribute("id", "winner");
+		winner.style.visibility = "hidden";
+
 		game.appendChild(dice);
 		game.appendChild(computer);
 		game.appendChild(player);
 		game.appendChild(start);
 		game.appendChild(roll);
 		game.appendChild(pin);
+		game.appendChild(winner);
 		const startButton = document.querySelector("#start");
 		startButton.addEventListener('click', computerPlay);
+
+		//listen for roll click
+		const rollButton = document.querySelector("#roll");
+		rollButton.addEventListener('click', function (){
+			dice1.forEach(function (die){
+				if (die.pinned === false){
+					die.face = diceRoll();
+				}
+			});
+
+			//display in DOM
+			let diceIndex1 = 0;
+			dice.childNodes.forEach((child) => {
+				child.textContent = dice1[diceIndex1].face;
+				diceIndex1 ++;
+			});
+
+			//enable pin
+			pin.disabled = false;
+		});
+		//listen for die clicks
+		document.querySelectorAll("span").forEach(function(die){
+			die.addEventListener('click', function(){
+				//console.log("die selected");
+				if (!die.classList.contains("selected")){
+					die.classList.toggle("selected");
+				}
+			});
+		});
+	
+
+		//check for any pinned dice
+		pin.addEventListener('click', function (){
+			let numSelected = 0;
+			let diceIndex = 0;//use for pinning the dice1 object
+			document.querySelectorAll("span").forEach(function(die){
+				if (die.classList.contains("selected")){
+					if (!die.classList.contains("pinned")){
+						numPinned += 1;
+						die.classList.toggle("pinned");
+						playerScore  += dice1[diceIndex].face;
+						console.log("player selected ", dice1[diceIndex].face);
+						console.log("player score ", playerScore, " ");
+					}
+					if (die.classList.contains("unpinned")){
+						die.classList.toggle("unpinned");
+					}
+
+					dice1[diceIndex].pinned = true;
+					console.log("number of pinned dice in main function ", numPinned);
+					player.append(playerScore);
+					player.append(" ");
+					numSelected ++;
+
+				}
+				diceIndex ++;
+				//enable roll
+				roll.disabled = false;
+
+			});
+
 			
+		});	
+		if (numPinned === 5){
+			//winner.append("")
+			pin.disabled = true;
+			winner.style.visible = "visible";
+			console.log("GAME OVER");
+		}	
 
 	}
 function computerPlay(){
@@ -80,10 +153,8 @@ function computerPlay(){
 		dice1.forEach(function (die){
 			if (die.pinned === false){
 				die.face = diceRoll();
-				//console.log("die ", die.face);
 			}
 		});
-		//console.log("computer dice ", dice1);
 
 		//find the minimum that is not pinned
 		let minimum = dice1.reduce((min, curr) =>{
@@ -110,16 +181,16 @@ function computerPlay(){
 
 		if (minimum === 3) {
 			computerScore += 0;
-			computer.append(" 0 (3) + ");
+			computer.append("(0) ");
 		}
 		else{
 			computerScore += minimum;
-			if (numPins === 1){
-				computer.append(minimum + " = ");
-			}
-			else{
-				computer.append(minimum + " + ");
-			}
+		}
+		if (numPins === 1){
+			computer.append(minimum + " = ");
+		}
+		else{
+			computer.append(minimum + " + ");
 		}
 		numPins --;
 	}
@@ -129,12 +200,20 @@ function computerPlay(){
 
 	//console.log("computer score ", computerScore);
 	
-
+	//disable start, enable roll
 	start.disabled = true;
 	roll.disabled = false;
 
-	const rollButton = document.querySelector("#roll");
-	rollButton.addEventListener('click', rollDie);
+	//const rollButton = document.querySelector("#roll");
+	//rollButton.addEventListener('click', rollDie);
+
+	//player's turn, unpin everything
+	let boxes = document.querySelector(".dice");
+	dice1.forEach(function (die){
+		if (die.pinned){
+			die.pinned = false;
+		}
+	});
 }
 	
 function diceRoll(){
@@ -152,17 +231,9 @@ function diceRoll(){
 }
 
 function rollDie(){
-	//player's turn, unpin everything
-	let boxes = document.querySelector(".dice");
-	dice1.forEach(function (die){
-		if (die.pinned){
-			die.pinned = false;
-		}
-	});
-
 	let numPins = 5;
 	let numLoops = 0;
-	while(numPins > 0){
+	while(numPinned < 5){
 		dice1.forEach(function (die){
 			if (die.pinned === false){
 				die.face = diceRoll();
@@ -174,16 +245,18 @@ function rollDie(){
 			child.textContent = dice1[diceIndex].face;
 			diceIndex ++;
 		});
-		//disable roll
+		//disable roll, enable pin
 		roll.disabled = true;
 		pin.disabled = false;
-		//select dice
+		/*
+		//select dice, should this not be in while loop?
 		document.querySelectorAll("span").forEach(function(die){
 			die.addEventListener('click', function(){
 				console.log("die selected");
 				this.classList.toggle("selected");
 			});
 		});
+		
 		diceIndex = 0;//use for pinning 
 		//check for any pinned dice
 		pin.addEventListener('click', function (){
@@ -206,22 +279,23 @@ function rollDie(){
 			});
 		});	
 		diceIndex = 0;
+		*/
 		//check number of  dice that has been pinned, decrement it by loop counter
-		numPinned += dice1.reduce(function(accum, curr){
+		numPinned = dice1.reduce(function(accum, curr){
 			if (curr.pinned){
 				accum ++; 
 			}
 			return accum;
 		}, 0);
-		console.log("num pins ", numPinned);
+		console.log("num pinned die in roll function ", numPinned);
 		console.log("num pins left: ", numPins - numPinned);
  		numPins -= numPinned;
- 		
- 		numLoops ++;
-		if (numLoops > 1000){
+ 		 		numLoops ++;
+		if (numLoops > 2000){
 			console.log("too many loop ", numLoops);
 			break;
 		}
+		
 		
 	}
 	
