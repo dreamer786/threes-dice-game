@@ -11,7 +11,7 @@ var start;
 var roll;
 var pin;
 let numPinned = 0;
-let winner;
+var winner;
 
 document.addEventListener("DOMContentLoaded", function(event){
 	const go = document.querySelector('button');
@@ -115,7 +115,9 @@ function startGame(){
 					if (!die.classList.contains("pinned")){
 						numPinned += 1;
 						die.classList.toggle("pinned");
-						playerScore  += dice1[diceIndex].face;
+						if (dice1[diceIndex].face !== 3){
+							playerScore  += dice1[diceIndex].face;
+						}
 						console.log("player selected ", dice1[diceIndex].face);
 						console.log("player score ", playerScore, " ");
 					}
@@ -125,26 +127,49 @@ function startGame(){
 
 					dice1[diceIndex].pinned = true;
 					console.log("number of pinned dice in main function ", numPinned);
-					player.append(playerScore);
-					player.append(" ");
+					player.textContent = "Player Score: " + playerScore;
+
 					numSelected ++;
+
+					//enable roll
+					roll.disabled = false;
+					pin.disabled = true;
 
 				}
 				diceIndex ++;
-				//enable roll
-				roll.disabled = false;
+				
 
 			});
+			//DETERMINE WINNER
+			if (numPinned === 5){
+				pin.disabled = true;
+				roll.disabled = true;
+				console.log("GAME OVER");
+				player.textContent = "Player Score: " + playerScore;
+
+				if (playerScore > computerScore){
+					winner.classList.add("lose");
+					winner.textContent = "YOU LOSE";
+
+				}
+				else if (playerScore < computerScore){
+					winner.classList.add("win");
+					winner.textContent = "YOU WIN";
+
+				}
+				else{
+					winner.classList.add("tie");
+					winner.textContent = "TIE";
+
+				}
+				winner.style.visibility = "visible";
+
+			}	
+
 
 			
 		});	
-		if (numPinned === 5){
-			//winner.append("")
-			pin.disabled = true;
-			winner.style.visible = "visible";
-			console.log("GAME OVER");
-		}	
-
+		
 	}
 function computerPlay(){
 	let numPins = 5;
