@@ -1,6 +1,14 @@
 .overlay{
 	visibility: hidden;
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 100;
 }
+.modal{
+	margin: auto;
+}
+
 #game{
 	visibility: hidden;
 }

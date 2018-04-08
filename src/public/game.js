@@ -1,176 +1,190 @@
-
-
-var dice1 = [{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face: 0},{pinned:false, face:0},{pinned:false, face:0}];
-var numList = []; 
+var dice1 = [{pinned: false, face: 0}, {pinned: false, face: 0}, {pinned: false, face: 0}, {pinned: false, face: 0}, {pinned: false, face: 0}];
+var numList = [];
 var computerScore = 0;
 var playerScore = 0;
-var game; //game screen
-var player;//player score on screen
-var computer; //computer score on screen
+var game; 
+var player;
+var computer; 
 var start;
 var roll;
 var pin;
 let numPinned = 0;
 var winner;
+let numRolls = 0;
 
-document.addEventListener("DOMContentLoaded", function(event){
+document.addEventListener("DOMContentLoaded", function (event) {
 	const go = document.querySelector('button');
 	go.addEventListener('click', startGame);
-	
-
 });
 function startGame(){
-		let numbers = document.getElementsByName("diceValues")[0].value;
-		if (numbers){
-			numList =  numbers.split(",");
-		}
+	let numbers = document.getElementsByName("diceValues")[0].value;
+	if (numbers) {
+		numList =  numbers.split(",");
+	}
 
-		//remove title
-		document.getElementById("intro").style.visibility = "hidden";
-		
-		//show game screen
-		game = document.getElementById('game');
-		game.classList.remove('hidden');
-		game.style.visibility = "visible"; 
-
-		//create dice by a div with 5 p tags that have borders
-		var dice = document.createElement("div");
-		dice.setAttribute("class", "dice");
-		for(let i = 0; i < 5; i ++){
-			let die = document.createElement("span");
-			die.append("   ");
-			dice.appendChild(die);
-		}
-		//create start, roll, pin buttons
-		start = document.createElement("button");
-		start.append("Start");
-		start.setAttribute("id", "start")
-		roll = document.createElement("button");
-		roll.append("Roll");
-		roll.setAttribute("id", "roll");
-		pin = document.createElement("button");
-		pin.append("Pin");
-		pin.setAttribute("id", "pin");
-		roll.disabled = true;
-		pin.disabled = true;
-
-		player = document.createElement("p");
-		player.append("Player Score: 0");
-		player.style.visibility = "hidden";
-		
-		computer = document.createElement("p");
-		computer.append("Computer score: ");
-		computer.style.visibility = "hidden";
-
-		winner = document.createElement("p");
-		winner.setAttribute("id", "winner");
-		winner.style.visibility = "hidden";
-
-		game.appendChild(dice);
-		game.appendChild(computer);
-		game.appendChild(player);
-		game.appendChild(start);
-		game.appendChild(roll);
-		game.appendChild(pin);
-		game.appendChild(winner);
-		const startButton = document.querySelector("#start");
-		startButton.addEventListener('click', computerPlay);
-
-		//listen for roll click
-		const rollButton = document.querySelector("#roll");
-		rollButton.addEventListener('click', function (){
-			dice1.forEach(function (die){
-				if (die.pinned === false){
-					die.face = diceRoll();
-				}
-			});
-
-			//display in DOM
-			let diceIndex1 = 0;
-			dice.childNodes.forEach((child) => {
-				child.textContent = dice1[diceIndex1].face;
-				diceIndex1 ++;
-			});
-
-			//enable pin
-			pin.disabled = false;
-		});
-		//listen for die clicks
-		document.querySelectorAll("span").forEach(function(die){
-			die.addEventListener('click', function(){
-				//console.log("die selected");
-				if (!die.classList.contains("selected")){
-					die.classList.toggle("selected");
-				}
-			});
-		});
+	//remove title
+	document.getElementById("intro").style.visibility = "hidden";
 	
+	//show game screen
+	game = document.getElementById('game');
+	game.classList.remove('hidden');
+	game.style.visibility = "visible"; 
 
-		//check for any pinned dice
-		pin.addEventListener('click', function (){
-			let numSelected = 0;
-			let diceIndex = 0;//use for pinning the dice1 object
-			document.querySelectorAll("span").forEach(function(die){
-				if (die.classList.contains("selected")){
-					if (!die.classList.contains("pinned")){
-						numPinned += 1;
-						die.classList.toggle("pinned");
-						if (dice1[diceIndex].face !== 3){
-							playerScore  += dice1[diceIndex].face;
-						}
-						console.log("player selected ", dice1[diceIndex].face);
-						console.log("player score ", playerScore, " ");
-					}
-					if (die.classList.contains("unpinned")){
-						die.classList.toggle("unpinned");
-					}
+	//create dice by a div with 5 p tags that have borders
+	var dice = document.createElement("div");
+	dice.setAttribute("class", "dice");
+	for(let i = 0; i < 5; i ++){
+		let die = document.createElement("span");
+		die.append("   ");
+		die.style.backgroundColor = "white";
+		dice.appendChild(die);
+	}
+	//create start, roll, pin buttons
+	start = document.createElement("button");
+	start.append("Start");
+	start.setAttribute("id", "start")
+	roll = document.createElement("button");
+	roll.append("Roll");
+	roll.setAttribute("id", "roll");
+	pin = document.createElement("button");
+	pin.append("Pin");
+	pin.setAttribute("id", "pin");
+	roll.disabled = true;
+	pin.disabled = true;
 
-					dice1[diceIndex].pinned = true;
-					console.log("number of pinned dice in main function ", numPinned);
-					player.textContent = "Player Score: " + playerScore;
+	player = document.createElement("p");
+	player.append("Player Score: 0");
+	player.style.visibility = "hidden";
+	
+	computer = document.createElement("p");
+	computer.append("Computer score: ");
+	computer.style.visibility = "hidden";
 
+	winner = document.createElement("p");
+	winner.setAttribute("id", "winner");
+	winner.style.visibility = "hidden";
+
+	game.appendChild(dice);
+	game.appendChild(computer);
+	game.appendChild(player);
+	game.appendChild(start);
+	game.appendChild(roll);
+	game.appendChild(pin);
+	game.appendChild(winner);
+	const startButton = document.querySelector("#start");
+	startButton.addEventListener('click', computerPlay);
+
+	//listen for roll click
+	const rollButton = document.querySelector("#roll");
+	rollButton.addEventListener('click', function (){
+		numRolls += 1;
+		dice1.forEach(function (die){
+			if (die.pinned === false){
+				die.face = diceRoll();
+			}
+		});
+
+		//display in DOM
+		let diceIndex1 = 0;
+		dice.childNodes.forEach((child) => {
+			child.textContent = dice1[diceIndex1].face;
+			diceIndex1 ++;
+		});
+
+		//enable pin
+		pin.disabled = false;
+	});
+	//listen for die clicks
+	document.querySelectorAll("span").forEach(function (die) {
+		die.addEventListener('click', function () {
+			if (die.style.backgroundColor === "white" && numRolls === 0){
+				let overlay = document.querySelector(".overlay");
+				let errorMessage = document.querySelector(".modal");
+				errorMessage.childNodes[0].textContent = "You must roll before you select a die";
+				overlay.style.visibility = "visible";
+			}
+			else{
+				die.style.cssText = "";
+				die.classList.toggle("selected");
+				console.log("die clicked");		
+			}
+		});
+	});
+
+
+	//check for any pinned dice
+	pin.addEventListener('click', function () {
+		let numSelected = 0;
+		let diceIndex = 0;//use for pinning the dice1 object
+		document.querySelectorAll("span").forEach(function(die){
+			if (die.classList.contains("selected")){
+				if (!die.classList.contains("pinned")){
+					numPinned += 1;
 					numSelected ++;
-
-					//enable roll
-					roll.disabled = false;
-					pin.disabled = true;
-
+					die.classList.toggle("pinned");
+					if (dice1[diceIndex].face !== 3){
+						playerScore  += dice1[diceIndex].face;
+					}
+					console.log("player selected ", dice1[diceIndex].face);
+					console.log("player score ", playerScore, " ");
 				}
-				diceIndex ++;
-				
+				if (die.classList.contains("unpinned")){
+					die.classList.toggle("unpinned");
+				}
 
-			});
-			//DETERMINE WINNER
-			if (numPinned === 5){
-				pin.disabled = true;
-				roll.disabled = true;
-				console.log("GAME OVER");
+				dice1[diceIndex].pinned = true;
+				console.log("number of pinned dice in main function ", numPinned);
+				console.log("number of selected dice ", numSelected);
 				player.textContent = "Player Score: " + playerScore;
 
-				if (playerScore > computerScore){
-					winner.classList.add("lose");
-					winner.textContent = "YOU LOSE";
+				//enable roll
+				roll.disabled = false;
+				pin.disabled = true;
+			}
+			if (numSelected === 0 && diceIndex === 4){
+				let overlay = document.querySelector(".overlay");
+				let errorMessage = document.querySelector(".modal");
+				errorMessage.childNodes[0].textContent = "Choose at least one die to pin";
+				overlay.style.visibility = "visible";
+			}
+			diceIndex ++;
+		});
+		//DETERMINE WINNER
+		if (numPinned === 5){
+			pin.disabled = true;
+			roll.disabled = true;
+			console.log("GAME OVER");
+			player.textContent = "Player Score: " + playerScore;
 
-				}
-				else if (playerScore < computerScore){
-					winner.classList.add("win");
-					winner.textContent = "YOU WIN";
+			if (playerScore > computerScore){
+				winner.classList.add("lose");
+				winner.textContent = "YOU LOSE";
 
-				}
-				else{
-					winner.classList.add("tie");
-					winner.textContent = "TIE";
+			}
+			else if (playerScore < computerScore){
+				winner.classList.add("win");
+				winner.textContent = "YOU WIN";
 
-				}
-				winner.style.visibility = "visible";
+			}
+			else{
+				winner.classList.add("tie");
+				winner.textContent = "TIE";
 
-			}	
+			}
+			winner.style.visibility = "visible";
+
+		}	
 
 
-			
-		});	
 		
-	}
+	});	
+	let overlay = document.querySelector(".overlay");
+	let closeButton = document.querySelector(".closeButton");
+	closeButton.addEventListener('click', function () {
+		overlay.style.visibility = "hidden";
+	});
+	
+}
 function computerPlay(){
 	let numPins = 5;
 	//roll dice
@@ -186,8 +200,7 @@ function computerPlay(){
 			//if theres a 3, choose 3
 			if (curr.face === 3 && curr.pinned === false){
 				min = curr.face;
-			}
-			else if (curr.face < min && curr.pinned === false  && min !== 3){
+			} else if (curr.face < min && curr.pinned === false && min !== 3){
 				min = curr.face;
 			}
 			return min;
@@ -196,7 +209,7 @@ function computerPlay(){
 		//console.log("min ", minimum);
 		//pin the minimum (doesnt matter if there are duplicates?)
 		let found = false;
-		dice1.forEach(function(die){
+		dice1.forEach(function (die) {
 			if (die.face === minimum && !found){
 				//console.log("pinned");
 				die.pinned = true;
@@ -207,14 +220,12 @@ function computerPlay(){
 		if (minimum === 3) {
 			computerScore += 0;
 			computer.append("(0) ");
-		}
-		else{
+		} else{
 			computerScore += minimum;
 		}
 		if (numPins === 1){
 			computer.append(minimum + " = ");
-		}
-		else{
+		} else{
 			computer.append(minimum + " + ");
 		}
 		numPins --;
@@ -242,19 +253,15 @@ function computerPlay(){
 }
 	
 function diceRoll(){
-	//if there are numbers from the input, return first number, remove it from list
 	if (numList.length > 0){
-		//console.log("num roll die ", numList);
 		let num = numList.shift();
 		return parseInt(num);
-	}
-	else{
+	} else {
 		let rand = Math.floor(Math.random() * 6) + 1;
-		//console.log("random num ", rand);
 		return rand;
 	}
 }
-
+/*
 function rollDie(){
 	let numPins = 5;
 	let numLoops = 0;
@@ -304,18 +311,18 @@ function rollDie(){
 			});
 		});	
 		diceIndex = 0;
-		*/
+		
 		//check number of  dice that has been pinned, decrement it by loop counter
 		numPinned = dice1.reduce(function(accum, curr){
 			if (curr.pinned){
-				accum ++; 
+				accum++; 
 			}
 			return accum;
 		}, 0);
 		console.log("num pinned die in roll function ", numPinned);
 		console.log("num pins left: ", numPins - numPinned);
  		numPins -= numPinned;
- 		 		numLoops ++;
+ 		 		numLoops++;
 		if (numLoops > 2000){
 			console.log("too many loop ", numLoops);
 			break;
@@ -325,6 +332,7 @@ function rollDie(){
 	}
 	
 }
+
 
 function pinDie(){
 	//look through each span and see if it has selected class
@@ -341,12 +349,12 @@ function pinDie(){
 				die.classList.toggle("unpinned");
 			}
 			dice1[diceIndex].pinned = true;
-			numSelected ++;
+			numSelected++;
 		}
 		else{
 			die.classList.toggle("unpinned");
 		}
-		diceIndex ++;
+		diceIndex++;
 	});
-
-}
+} 
+*/
