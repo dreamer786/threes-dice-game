@@ -3,10 +3,16 @@
 	position: fixed;
 	height: 100%;
 	width: 100%;
-	z-index: 100;
+	z-index: 9999;
+	top: 0;
 }
 .modal{
 	margin: auto;
+	width: 50%;
+	height: 20%;
+	text-align: center;
+	margin-top: 20%;
+	border: 2px solid black; 
 }
 
 #game{
@@ -50,4 +56,7 @@ span:hover{
 }
 .tie{
 	color:blue;
+}
+.bgwhite{
+	background-color: white;
 }

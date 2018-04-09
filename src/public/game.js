@@ -36,7 +36,7 @@ function startGame(){
 	for(let i = 0; i < 5; i ++){
 		let die = document.createElement("span");
 		die.append("   ");
-		die.style.backgroundColor = "white";
+		//die.style.backgroundColor = "white";
 		dice.appendChild(die);
 	}
 	//create start, roll, pin buttons
@@ -73,6 +73,16 @@ function startGame(){
 	game.appendChild(winner);
 	const startButton = document.querySelector("#start");
 	startButton.addEventListener('click', computerPlay);
+	/*
+	dice.childNodes.forEach(function(die){
+		die.addEventListener("mouseover", function (){
+			die.style.backgroundColor = "yellow";
+		});
+		die.addEventListener("mouseout", function (){
+			die.style.backgroundColor = "white";
+		});
+	});	
+	*/
 
 	//listen for roll click
 	const rollButton = document.querySelector("#roll");
@@ -97,7 +107,8 @@ function startGame(){
 	//listen for die clicks
 	document.querySelectorAll("span").forEach(function (die) {
 		die.addEventListener('click', function () {
-			if (die.style.backgroundColor === "white" && numRolls === 0){
+			if (die.innerHTML === "   " && numRolls === 0){
+				console.log("this ", this);
 				let overlay = document.querySelector(".overlay");
 				let errorMessage = document.querySelector(".modal");
 				errorMessage.childNodes[0].textContent = "You must roll before you select a die";
