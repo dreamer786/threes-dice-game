@@ -73,17 +73,7 @@ function startGame(){
 	game.appendChild(winner);
 	const startButton = document.querySelector("#start");
 	startButton.addEventListener('click', computerPlay);
-	/*
-	dice.childNodes.forEach(function(die){
-		die.addEventListener("mouseover", function (){
-			die.style.backgroundColor = "yellow";
-		});
-		die.addEventListener("mouseout", function (){
-			die.style.backgroundColor = "white";
-		});
-	});	
-	*/
-
+	
 	//listen for roll click
 	const rollButton = document.querySelector("#roll");
 	rollButton.addEventListener('click', function (){
@@ -103,6 +93,7 @@ function startGame(){
 
 		//enable pin
 		pin.disabled = false;
+		roll.disabled = true;
 	});
 	//listen for die clicks
 	document.querySelectorAll("span").forEach(function (die) {
