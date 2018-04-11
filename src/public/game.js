@@ -207,20 +207,24 @@ function startGame(){
 				}
 
 				dice1[diceIndex].pinned = true;
-				console.log("number of pinned dice in main function ", numPinned);
-				console.log("number of selected dice ", numSelected);
+				//console.log("number of pinned dice in main function ", numPinned);
+				//console.log("number of selected dice ", numSelected);
 				player.textContent = "Player Score: " + playerScore;
 
-				//enable roll
-				roll.disabled = false;
-				pin.disabled = true;
 			}
 			if (numSelected === 0 && diceIndex === 4){
 				const overlay = document.querySelector(".overlay");
 				const errorMessage = document.querySelector(".modal");
 				errorMessage.childNodes[0].textContent = "Choose at least one die to pin";
 				overlay.style.visibility = "visible";
+				pin.disabled = false;
+				roll.disabled = true;
 			}
+			else{
+				roll.disabled = false;
+				pin.disabled = true;
+			}
+			
 			diceIndex++;
 		});
 		//DETERMINE WINNER
